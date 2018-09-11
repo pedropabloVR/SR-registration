@@ -42,10 +42,10 @@ clc
 
 %% Parameters
 DefaultPath   = 'C:\Users\eb758\Desktop\HIV reconstr'; % some directory
-software      = 'thunder'; % 'rapid' or 'thunder' for rapidSTORM or ThunderSTORM reconstructions
+software      = 'rapid'; % 'rapid' or 'thunder' for rapidSTORM or ThunderSTORM reconstructions
 area_token    = 'a'; % e.g. 'a' if files are called 'a1_488.tif', 'a2_488.tif', ...
 RefCh_token   = '_647'; % reference channel (e.g. red: '_647')
-tformCh_token = {'_488'}; % channel(s) to be transformed
+tformCh_token = {'_561'}; % channel(s) to be transformed
 show_plots    = 'off'; % show plots:'off' or 'on'
 
 %%
@@ -102,9 +102,15 @@ for i=1:length(tformCh_token)
         disp(fullfile(PathName, current_file));
 
         % Read localisation data and obtain x- and y-coordinates
-        LocInfo = ReadLocFile_thunder(fullfile(PathName, current_file));
-        X_d = LocInfo{:,2};
-        Y_d = LocInfo{:,3};
+        if strcmp(software,'thunder')
+            LocInfo = ReadLocFile_thunder(fullfile(PathName, current_file));
+            X_d = LocInfo{:,2};
+            Y_d = LocInfo{:,3};
+        elseif strcmp(software,'rapid')
+            LocInfo = Read_LocFile(fullfile(PathName, current_file),0);
+            X_d = LocInfo{:,1};
+            Y_d = LocInfo{:,2};
+        end 
         
         % Get the transform
         FileName = dir([PathName,filesep,'*',channel_token,'.mat']);
