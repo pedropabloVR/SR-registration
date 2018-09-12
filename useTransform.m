@@ -41,11 +41,11 @@ close all
 clc
 
 %% Parameters
-DefaultPath   = 'C:\Users\eb758\Desktop\HIV reconstr'; % some directory
-software      = 'rapid'; % 'rapid' or 'thunder' for rapidSTORM or ThunderSTORM reconstructions
+DefaultPath   = 'E:\Experiments\synaptosomes\2018_08_15_Pedro_ezra_synaptosomes_4thRound_PHYS\input\output_reconstructions'; % some directory
+software      = 'thunder'; % 'rapid' or 'thunder' for rapidSTORM or ThunderSTORM reconstructions
 area_token    = 'a'; % e.g. 'a' if files are called 'a1_488.tif', 'a2_488.tif', ...
 RefCh_token   = '_647'; % reference channel (e.g. red: '_647')
-tformCh_token = {'_561'}; % channel(s) to be transformed
+tformCh_token = {'_488'}; % channel(s) to be transformed
 show_plots    = 'off'; % show plots:'off' or 'on'
 
 %%
@@ -129,18 +129,18 @@ for i=1:length(tformCh_token)
         axis equal
 
         % Replace x and y coordinates by the transformed ones
-        LocInfo.xnm = U;
-        LocInfo.ynm = V;
+        LocInfo.x = U;
+        LocInfo.y = V;
 
         % Save the registered localization file
         newname = strcat(strsplit(current_file,'.'),'_reg.csv');
         newname = newname{1};
         LocInfo = table2array(LocInfo);
         fid = fopen(fullfile(output_dir_path,newname),'wt');
-        header = 'frame,x [nm],y [nm],sigma [nm],intensity [photon],offset [photon],bkgstd [photon],chi2,uncertainty [nm]\n';
+        header = 'frame,x [nm],y [nm],sigma [nm],intensity [photon],offset [photon],bkgstd [photon],uncertainty [nm]\n';
         fprintf(fid,header);
         if fid > 0
-            fprintf(fid,'%f,%f,%f,%f,%f,%f,%f,%f,%f,\n',LocInfo');
+            fprintf(fid,'%f,%f,%f,%f,%f,%f,%f,%f\n',LocInfo');
             fclose(fid);
         end
     end

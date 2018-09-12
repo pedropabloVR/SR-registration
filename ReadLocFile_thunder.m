@@ -15,7 +15,7 @@ end
 
 % Read data columns
 fileID = fopen(filename,'r');
-formatSpec = '%f%f%f%f%f%f%f%f%f%[^\n\r]';
+formatSpec = '%f%f%f%f%f%f%f%f%[^\n\r]';
 dataArray = textscan(fileID, formatSpec, endRow(1)-startRow(1)+1, 'Delimiter', delimiter, 'EmptyValue', NaN, 'HeaderLines', startRow(1)-1, 'ReturnOnError', false, 'EndOfLine', '\r\n');
 for block=2:length(startRow)
     frewind(fileID);
@@ -27,4 +27,4 @@ end
 fclose(fileID);
 
 % Create output variables
-variables = table(dataArray{1:end-1}, 'VariableNames', {'frame','x','y','sigma','intensity','offset','bkgstd','uncertainty','chi2'});
+variables = table(dataArray{1:end-1}, 'VariableNames', {'frame','x','y','sigma','intensity','offset','bkgstd','uncertainty'});
