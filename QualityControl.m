@@ -48,7 +48,7 @@ NearNeighbour = num_TooClose == 0;
 deletedLocalizations(NearNeighbour,:) = [];
 
 % Convert back to table
-correctedLocFile = array2table(correctedLocFile, 'VariableNames', {'frame','x','y','sigma','intensity','offset','bkgstd','uncertainty','chi2'});
+correctedLocFile = array2table(correctedLocFile, 'VariableNames', {'frame','x','y','sigma','intensity','offset','bkgstd','uncertainty'});
 
 % Plot
 scatter(deletedLocalizations(:,2), deletedLocalizations(:,3), 'marker', '*');

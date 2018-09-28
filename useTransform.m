@@ -41,7 +41,7 @@ close all
 clc
 
 %% Parameters
-DefaultPath   = 'E:\Experiments\synaptosomes\2018_08_15_Pedro_ezra_synaptosomes_4thRound_PHYS\input\output_reconstructions'; % some directory
+DefaultPath   = 'E:\Experiments\synaptosomes\2018_03_17_Pedro_Amberley_Synaptosome_2ndRound\egta\thunderSTORM'; % some directory
 software      = 'thunder'; % 'rapid' or 'thunder' for rapidSTORM or ThunderSTORM reconstructions
 area_token    = 'a'; % e.g. 'a' if files are called 'a1_488.tif', 'a2_488.tif', ...
 RefCh_token   = '_647'; % reference channel (e.g. red: '_647')

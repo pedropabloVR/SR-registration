@@ -47,10 +47,10 @@ close all
 clc
 
 %% Parameters
-DefaultPath    = 'E:\Experiments\synaptosomes\2018_08_15_Pedro_ezra_synaptosomes_4thRound_PHYS\beads\bead_reconstructions';
+DefaultPath    = 'E:\Experiments\synaptosomes\2018_03_17_Pedro_Amberley_Synaptosome_2ndRound\beads\bead_reconstructions';
 software       = 'thunder'; % 'rapid' or 'thunder' for rapidSTORM or ThunderSTORM reconstructions
 pix            = 10; % 10 nm per pix
-area_token     = 'beads'; % e.g. 'a' if files are called 'a1_488.tif', 'a2_488.tif', ...
+area_token     = 'colorCalib3'; % e.g. 'a' if files are called 'a1_488.tif', 'a2_488.tif', ...
 RefCh_token    = '_647'; % reference channel (e.g. red: '_647')
 tformCh_token  = {'_488','_561'}; % channel(s) to be transformed (e.g. {'_488','_561'})
 R_search       = 200; % search radius used to associate localizations (in nm)
