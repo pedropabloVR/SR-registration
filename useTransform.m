@@ -30,7 +30,7 @@ to this area_token to get a1, a2, a3, ... aN and register all of them).
 
 Author: Pedro Vallejo Ramirez
 Laser Analytics Group
-Updated: 02/08/2018
+Updated: 01/10/2018
 
 This script depends on function:
   ReadLocFile_thunder.m
@@ -41,11 +41,11 @@ close all
 clc
 
 %% Parameters
-DefaultPath   = 'E:\Experiments\synaptosomes\2018_03_17_Pedro_Amberley_Synaptosome_2ndRound\egta\thunderSTORM'; % some directory
+DefaultPath   = 'E:\Experiments\synaptosomes\raw_data_2ndRound\egta\output_reconstructions'; % some directory
 software      = 'thunder'; % 'rapid' or 'thunder' for rapidSTORM or ThunderSTORM reconstructions
 area_token    = 'a'; % e.g. 'a' if files are called 'a1_488.tif', 'a2_488.tif', ...
 RefCh_token   = '_647'; % reference channel (e.g. red: '_647')
-tformCh_token = {'_488'}; % channel(s) to be transformed
+tformCh_token = {'_488','_561'}; % channel(s) to be transformed
 show_plots    = 'off'; % show plots:'off' or 'on'
 
 %%
@@ -79,7 +79,9 @@ for i=1:length(tformCh_token)
     channel_token = channel_token{1};
     
     % Get list of files in the directory matching area_token and channel_token
-    FileList = dir([PathName,filesep,area_token,'*',channel_token,type]);
+    FileList = dir([PathName,filesep,'*',channel_token,type]);
+    
+   
     if isempty(FileList)
         disp('No files matching user-specified area_token or channel_token found in directory.')
         return
@@ -90,11 +92,14 @@ for i=1:length(tformCh_token)
     % Loop over all GC files and transform them
     for j=1:N_files
         
+         name = strsplit(FileList(j).name,'_');
+        
         % Get current area_token
         if N_files==1
             area_token_i = area_token;
         else
-            area_token_i = strcat(area_token,num2str(j));
+            %area_token_i = strcat(area_token,num2str(j));
+            area_token_i = name{1};
         end
 
         % Name of the current file
