@@ -33,7 +33,7 @@ Author: Pedro Vallejo Ramirez, Laser Analytics Group
 Modified by Ezra Bruggeman to allow multi-colour registration, use of
 multiple bead images to calculate the transform
 (better sampling of FoV),
-and write away a summary pdf with relavent plots.
+and write away a summary pdf with relevant plots.
 
 Last updated: 21/08/2018
 
@@ -41,28 +41,31 @@ Depends on functions:
   loc_info.m
   AssociateCoordinates.m
 %}
-
+    
 clear all
 close all
 clc
 
 %% Parameters
-DefaultPath    = 'E:\Experiments\synaptosomes\2018_03_17_Pedro_Amberley_Synaptosome_2ndRound\beads\bead_reconstructions';
+DefaultPath    = '/Users/pedrovallejo/OneDrive - University Of Cambridge/lag/microscopy work/color registration/test data 20190309/beads/bead_reconstructions/';
+
 software       = 'thunder'; % 'rapid' or 'thunder' for rapidSTORM or ThunderSTORM reconstructions
-pix            = 10; % 10 nm per pix
-area_token     = 'colorCalib3'; % e.g. 'a' if files are called 'a1_488.tif', 'a2_488.tif', ...
+Trafo_type     = 'polynomial'; % transform type ('polynomial' or 'lwm')
+area_token     = 'beads'; % e.g. 'a' if files are called 'a1_488.tif', 'a2_488.tif', ...
 RefCh_token    = '_647'; % reference channel (e.g. red: '_647')
 tformCh_token  = {'_488','_561'}; % channel(s) to be transformed (e.g. {'_488','_561'})
+
+pix            = 10; % 10 nm per pix
 R_search       = 200; % search radius used to associate localizations (in nm)
-Trafo_type     = 'polynomial'; % transform type ('polynomial' or 'lwm')
-polyn_order    = 2; % order of the polynomial transform (if Trafo_type = 'polynomial', 2 is recommended)
-control_points = 25; % nr of points used to calculate lwm transform (at least 6, recommend 25-30)
-show_plots     = 'on'; % show plots:'off' or 'on'
+polyn_order    = 2;   % order of the polynomial transform (if Trafo_type = 'polynomial', 2 is recommended)
+control_points = 25;  % nr of points used to calculate lwm transform (at least 6, recommend 25-30)
 
 sigma_max      = 200; % max acceptable sigma (in nm)
 camera_pixel   = 117; % nm 
 r_min          = 5*camera_pixel; % minimum distance that beads need to be seperated (in nm)
 FOV            = 256; % size of the camera field of view (e.g. 128x128, 256x256) 
+show_plots     = 'on'; % show plots:'off' or 'on'
+
 %%
 
 % Get directory of bead files
@@ -123,9 +126,9 @@ for i=1:length(tformCh_token)
     Y_concatenated = [];
     Xd_concatenated = [];
     Yd_concatenated = [];
-    
+ 
+    %% Load files and associate coordinates
     for j=1:N_files
-        %% Load files and associate coordinates
         
         % Get current area_token
         if N_files==1
@@ -139,26 +142,23 @@ for i=1:length(tformCh_token)
         FileName_tform = fullfile(PathName,strcat(area_token_i,channel_token,type));
         
         % Get X and Y coordinates of red an green channel (RC and GC)
-        [x_ref,y_ref,counts_ref,vars_ref,precision_ref]       = loc_info(PathName, pix, area_token_i, RefCh_token,   software, sigma_max, r_min);
+        [x_ref,y_ref,counts_ref,vars_ref,precision_ref]           = loc_info(PathName, pix, area_token_i, RefCh_token,   software, sigma_max, r_min);
         [x_tform,y_tform,counts_tform,vars_tform,precision_tform] = loc_info(PathName, pix, area_token_i, channel_token, software, sigma_max, r_min);
         
         % Associate coordinates
-        X=[]; Y=[]; X_d=[]; Y_d=[];
         [x_ref, y_ref, x_tform, y_tform,N_local] = AssociateCoordinates(x_ref, y_ref, x_tform, y_tform, R_search);
         disp(['Number of localizations associated: ',num2str(size(x_ref,1))]);
         disp(' ');
         
+        % remove from the precision of localisations column in the
+        % reference channel 
         precision_ref(N_local ~= 1) = [];
         %precision_tform(N_local ~= 1) = [];
-       
-        X = cat(1,X,x_ref);
-        Y = cat(1,Y,y_ref);
-        X_d = cat(1,X_d,x_tform);
-        Y_d = cat(1,Y_d,y_tform);
-        X_concatenated  = cat(1, X_concatenated,  X);
-        Y_concatenated  = cat(1, Y_concatenated,  Y);
-        Xd_concatenated = cat(1, Xd_concatenated, X_d);
-        Yd_concatenated = cat(1, Yd_concatenated, Y_d);
+        
+        X_concatenated  = cat(1, X_concatenated,  x_ref);
+        Y_concatenated  = cat(1, Y_concatenated,  y_ref);
+        Xd_concatenated = cat(1, Xd_concatenated, x_tform);
+        Yd_concatenated = cat(1, Yd_concatenated, y_tform);
     end
     
     %% Get transform
@@ -236,21 +236,22 @@ for i=1:length(tformCh_token)
     disp(['Post-reg TRE = ',num2str(TRE,'%6.1f'),' nm']);
     
     if strcmp(show_plots,'on')
-        formattedTitle = sprintf('Histogram of Post-registration offset %s',strcat(area_token_i,channel_token));
+        formattedTitle = sprintf('Histogram of Post-registration offset for %s',strcat(area_token_i,channel_token));
         figure('Color','white','name',formattedTitle, 'visible',show_plots);
         %hist(PostRegOffset,0:2:50)
         %xlim([0 50])
-        hist(PostRegOffset)
+        histogram(PostRegOffset,'BinWidth',3,'FaceAlpha',0.8,'FaceColor',[0.4 0.6 0.7])
         xlabel 'R_{offset} (nm)'
         
         formattedTitle = sprintf('Histogram of localisation error for beads in %s',strcat(area_token_i,channel_token));
         figure('Color','white','name',formattedTitle, 'visible',show_plots);
         %hist(PostRegOffset,0:2:50)
         %xlim([0 50])
-        histogram(precision_ref,10,'FaceAlpha',0.5,'FaceColor','r');
+        histogram(precision_ref,'BinWidth',0.5,'FaceAlpha',0.5,'FaceColor','r');
         hold on
-        histogram(precision_tform,10,'FaceAlpha',0.5,'FaceColor','g');
-        xlabel 'Localisation error (nm)'
+        histogram(precision_tform,'BinWidth',0.5,'FaceAlpha',0.5,'FaceColor','g');
+        xlabel('Localisation error (nm)')
+        ylabel('Counts')
         legend('reference channel','2nd channel');
     end
     
@@ -306,7 +307,9 @@ for i=1:length(tformCh_token)
     % work in progress for this
     formattedTitle = sprintf('Scatter plot for the optical offset %s%s',strcat(area_token_i,channel_token));
     fig = figure('Color','white','name',formattedTitle,'Units','normalized','visible',show_plots);
-    scatter(X_concatenated -Xd_concatenated,Y_concatenated - Yd_concatenated,'.','r');
+    scatter(X_concatenated -Xd_concatenated,Y_concatenated - Yd_concatenated,'.','r'); %x_ref-transformed, y_ref - transformed
+    
+    scatter
     xlim([-150 150]);
     ylim([-150 150]);
     xlabel('registration offset x (nm)');
