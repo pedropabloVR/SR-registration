@@ -9,10 +9,11 @@ the function ReadLocFile_thunder.m and filters localizations based on size
 are too close together (closer than some value r_min, e.g. 5 x pixelsize).
 
 Author: Ezra Bruggeman, Laser Analytics Group
-Last updated: 21 Aug 2018
+Last updated: 10 March 2019
 %}
 
-function correctedLocFile = QualityControl(localizations, r_min, sigma_max)
+function correctedLocFile = QualityControl(localizations, r_min, sigma_max, show)
+
 
 %% Control 1: Filter out beads that are too big
 localizations = localizations(localizations.sigma < sigma_max,:);
@@ -26,10 +27,11 @@ localizations = table2array(localizations);
 coordinates = localizations(:,2:3);
 
 % Plot localizations
-figure;
-scatter(coordinates(:,1), coordinates(:,2));
-hold on;
-
+if show
+    figure;
+    scatter(coordinates(:,1), coordinates(:,2));
+    hold on;
+end 
 % Calculate the distance between every set of points
 distAll = pdist2(coordinates,coordinates);
 
@@ -51,9 +53,11 @@ deletedLocalizations(NearNeighbour,:) = [];
 correctedLocFile = array2table(correctedLocFile, 'VariableNames', {'frame','x','y','sigma','intensity','offset','bkgstd','uncertainty'});
 
 % Plot
-scatter(deletedLocalizations(:,2), deletedLocalizations(:,3), 'marker', '*');
-legend({'all points', ['points with neighbours distance < ' num2str(r_min) ' nm']}, 'location', 'northoutside');
-set(gca,'DataAspectRatio',[1 1 1]);
-hold off;
+if show
+    scatter(deletedLocalizations(:,2), deletedLocalizations(:,3), 'marker', '*');
+    legend({'all points', ['points with neighbours distance < ' num2str(r_min) ' nm']}, 'location', 'northoutside');
+    set(gca,'DataAspectRatio',[1 1 1]);
+    hold off;
+end 
 
 end
