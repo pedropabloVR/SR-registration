@@ -202,7 +202,7 @@ for i=1:length(tformCh_token)
     [U,V] = transformPointsInverse(tform,X_d,Y_d);
     results = zeros(size(X,1),6); % start an array to store reference, warped, and unwarped coordinates.
     
-    %% Plot intermediate results and calculate registration error (TRE)
+    %% Plot results and calculate registration error (TRE)
     if show_plots
         
         % Display overlay of both channels before and after registration as a
@@ -248,7 +248,7 @@ for i=1:length(tformCh_token)
     disp(['Post-reg TRE = ',num2str(TRE,'%6.1f'),' nm']);
     
     if show_plots
-        formattedTitle = sprintf('Histogram of Post-registration offset %s',strcat(area_token,channel_token));
+        formattedTitle = sprintf('Histogram of Post-registration offset %s',strcat(area_token_i,channel_token));
         figure('Color','white','name',formattedTitle, 'visible',show_plots);
         %hist(PostRegOffset,0:2:50)
         %xlim([0 50])
@@ -256,7 +256,7 @@ for i=1:length(tformCh_token)
         ylabel('Frequency of candidates');
         xlabel('R_{offset} (nm)');
         
-        formattedTitle = sprintf('Histogram of localisation error for beads in %s',strcat(area_token,channel_token));
+        formattedTitle = sprintf('Histogram of localisation error for beads in %s',strcat(area_token_i,channel_token));
         figure('Color','white','name',formattedTitle, 'visible',show_plots);
         %hist(PostRegOffset,0:2:50)
         %xlim([0 50])
@@ -269,10 +269,9 @@ for i=1:length(tformCh_token)
         legend('reference channel','2nd channel');
     end
     
-    %% Show the transformation on a meshgrid and as a vectorfield just for demonstration
+    % Show the transformation on a meshgrid and as a vectorfield
     
     % Create equally spaced meshgrid using estimated FOV
-    
     n_points    = 20;
     Field_size  = FOV*camera_pixel; % in nm
     xgv         = linspace(0,Field_size,n_points);
@@ -352,7 +351,7 @@ for i=1:length(tformCh_token)
     disp(['Transformation saved as: ',output_dir_path,filesep,trafo_filename]);
     
     % Output original reference, warped, and unwarped coordinates of 
-    % reference and 2nd channel
+    % reference and 2nd channel THIS IS UNFINISHED
     results = cat(2,X,Y,X_d,Y_d,U,V);
     results_tab = array2table(results,'VariableNames',{'X','Y','Xd','Yd','U','V'});
     writetable(results_tab,[output_dir_path filesep strcat(area_token_i, channel_token) 'results.csv']);
@@ -360,5 +359,5 @@ for i=1:length(tformCh_token)
     
 end
 if N_files > 1
-     fclose all;
+%     fclose all;
 end

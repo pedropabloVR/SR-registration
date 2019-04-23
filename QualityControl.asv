@@ -68,18 +68,19 @@ end
 %       
 % end
 
+% distAll = pdist2(coordinates,coordinates);
+% 
+% 
+% 
+% % Find the points that are closer together than r_min
+% tooClose = distAll < r_min;
+% num_TooClose = (sum(tooClose) - 1);
+% 
+% % Get filtered matrix 
+% correctedLocFile = localizations;
+% noNearNeighbour = num_TooClose ~= 0;
+% correctedLocFile(noNearNeighbour, :) = [];
 
-% Calculate the distance between every set of points
-distAll = pdist2(coordinates,coordinates);
-
-% Find the points that are closer together than r_min
-tooClose = distAll < r_min;
-num_TooClose = (sum(tooClose) - 1);
-
-% Get filtered matrix 
-correctedLocFile = localizations;
-noNearNeighbour = num_TooClose ~= 0;
-correctedLocFile(noNearNeighbour, :) = [];
 
 % Get matrix containing only rows that were filtered out (for visualization purposes)
 deletedLocalizations = localizations;

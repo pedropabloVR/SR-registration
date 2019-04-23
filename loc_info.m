@@ -16,7 +16,7 @@ Depends on function:
 %}
 
 function [X,Y,counts,vars,precision] = loc_info(Path, pix_size, area_token, ...
-    channel_token, software, sigma_max, r_min)
+    channel_token, software, sigma_max, r_min,show)
 
 % Check whether output is from rapidSTORM or ThunderSTORM
 if strcmp(software,'rapid')
@@ -52,7 +52,7 @@ if strcmp(software,'rapid')
         disp(['Number of localizations: ', num2str(size(LocFile,1))]);
         
         % Filter out beads that are too big, and localizations that are too close together
-        LocFile = QualityControl(LocFile, r_min, sigma_max);
+        LocFile = QualityControl(LocFile, r_min, sigma_max,show);
         
         % Get coordinates, intensity and localizations IDs
         X{1,i}          = LocFile(:,1)/pix_size;
@@ -76,7 +76,7 @@ elseif strcmp(software,'thunder')
         disp(['Number of localizations: ', num2str(size(LocFile,1))]);
         
         % Filter out beads that are too big, and localizations that are too close together
-        LocFile = QualityControl(LocFile, r_min, sigma_max);
+        LocFile = QualityControl(LocFile, r_min, sigma_max,show);
         
         % Get coordinates, intensity and localizations IDs
         X{1,i}      = LocFile.x;
